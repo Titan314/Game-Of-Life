@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Board {
     private boolean grid[][];
@@ -46,6 +47,10 @@ public class Board {
         return new Cell(x, y, grid[y][x]);
     }
 
+    public void setCell(int x, int y, boolean alive) {
+        grid[y][x] = alive;
+    }
+
     public void setCellState(Cell cell, boolean state)
     {
         grid[cell.getY()][cell.getX()] = state;
@@ -60,4 +65,18 @@ public class Board {
     public Cell getSouthWest(int x, int y) { return getCell(x - 1, y + 1); }
     public Cell getWest     (int x, int y) { return getCell(x - 1, y);}
     public Cell getNorthWest(int x, int y) { return getCell(x - 1, y -1);}
+
+    public static Board RandomBoard(int width, int height)
+    {
+        Board board = new Board(width, height);
+
+        Random random = new Random();
+
+        for(int y = 0; y < height; y++)
+            for(int x = 0; x < width; x++)
+                board.setCell(x, y, random.nextBoolean());
+
+        return board;
+    }
+
 }

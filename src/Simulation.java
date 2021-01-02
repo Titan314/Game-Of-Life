@@ -8,6 +8,13 @@ public class Simulation {
         tempBoard = new Board(width, height);
     }
 
+    public Simulation(Board board)
+    {
+        mainBoard = board;
+        tempBoard = new Board(mainBoard.getWidth(), mainBoard.getHeight());
+    }
+
+
     public Board getBoard()
     {
         return mainBoard;
@@ -40,7 +47,7 @@ public class Simulation {
                 numAliveNeighbors++;
         }
 
-        if(cell.isAlive() && (numAliveNeighbors < 2 || numAliveNeighbors > 3))
+        if(cell.isAlive() && (numAliveNeighbors == 2 || numAliveNeighbors == 3))
             return true;
         else if (numAliveNeighbors == 3)
             return true;
@@ -50,8 +57,8 @@ public class Simulation {
 
     private void swapBoards()
     {
-        Board swap = mainBoard;
-        mainBoard = tempBoard;
-        tempBoard = swap;
+        for(int y = 0; y < mainBoard.getHeight(); y++)
+            for(int x = 0; x < mainBoard.getWidth(); x++)
+                mainBoard.setCell(x, y, tempBoard.getCell(x, y).isAlive());
     }
 }
