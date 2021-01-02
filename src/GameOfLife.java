@@ -40,7 +40,8 @@ public class GameOfLife
         simulationMenu.add(stepItem);
         stepItem.addActionListener(new StepListener());
 
-        Board board = new Board(32, 32);
+
+        Board board = new Board(256, 256);
         board.setCell(1, 0, true);
         board.setCell(2, 1, true);
         board.setCell(0, 2, true);
@@ -86,5 +87,4 @@ public class GameOfLife
 
         }
     }
-
 }

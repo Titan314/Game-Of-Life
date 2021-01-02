@@ -6,6 +6,8 @@ public class Board {
     private int width;
     private int height;
 
+    private boolean wrapAround = true;
+
     public Board(int width, int height)
     {
         this.width = width;
@@ -41,7 +43,19 @@ public class Board {
 
     public Cell getCell(int x, int y)
     {
-        if(x < 0 || x >= width || y < 0 || y >= height)
+        if(wrapAround)
+        {
+            if(x < 0)
+                x = width + x;
+            else if(x >= width)
+                x = x - width;
+
+            if(y < 0)
+                y = height + y;
+            else if(y >= height)
+                y = y - height;
+        }
+        else if(x < 0 || x >= width || y < 0 || y >= height)
             return null;
 
         return new Cell(x, y, grid[y][x]);
