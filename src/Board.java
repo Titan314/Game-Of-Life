@@ -6,7 +6,7 @@ public class Board {
     private int width;
     private int height;
 
-    private boolean wrapAround = true;
+    private boolean wrapAround = false;
 
     public Board(int width, int height)
     {

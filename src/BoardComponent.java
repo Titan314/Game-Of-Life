@@ -16,11 +16,14 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
     private float offsetX;
     private float offsetY;
 
+    private Point lastModified;
+
     public BoardComponent(Board board)
     {
         super();
 
         this.board = board;
+        this.lastModified = new Point(-1, -1);
 
         this.setPreferredSize(new Dimension(720, 480));
         this.addMouseWheelListener(this);
@@ -66,9 +69,14 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
     public void mouseWheelMoved(MouseWheelEvent e) {
         int scroll = e.getWheelRotation() * e.getScrollAmount();
 
+        Point scrollPoint = e.getPoint();
+
         float newZoom = zoomFactor - (float)scroll;
+        float delZoom = newZoom - zoomFactor;
         if(newZoom < 1.0f)
             newZoom = 1.0f;
+
+
 
         zoomFactor = newZoom;
 
@@ -77,13 +85,41 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        Point newPoint = e.getPoint();
-        offsetX += newPoint.x - mousePoint.x;
-        offsetY += newPoint.y - mousePoint.y;
+        int panOnMask = e.BUTTON3_DOWN_MASK;
+        int panOffMask = e.BUTTON1_DOWN_MASK | e.BUTTON2_DOWN_MASK;
+        int drawOnMask = e.BUTTON1_DOWN_MASK;
+        int drawOffMask = e.BUTTON2_DOWN_MASK | e.BUTTON3_DOWN_MASK;
 
-        mousePoint = e.getPoint();
+        if((e.getModifiersEx() & (panOnMask | panOffMask)) == panOnMask) {
 
-        repaint();
+
+            Point newPoint = e.getPoint();
+            offsetX += newPoint.x - mousePoint.x;
+            offsetY += newPoint.y - mousePoint.y;
+
+            mousePoint = e.getPoint();
+
+            repaint();
+        }
+
+        if((e.getModifiersEx() & (drawOnMask | drawOffMask)) == drawOnMask) {
+            Point point = e.getPoint();
+
+            int cellX = (int)((float)(point.x - offsetX) / zoomFactor);
+            int cellY = (int)((float)(point.y - offsetY) / zoomFactor);
+
+            if(cellX != lastModified.x || cellY != lastModified.y)
+            {
+                Cell curCell = board.getCell(cellX, cellY);
+                board.setCellState(curCell, !curCell.isAlive());
+
+                repaint();
+
+                lastModified = new Point(cellX, cellY);
+            }
+
+        }
+
     }
 
     @Override
@@ -93,11 +129,23 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if(e.getButton() == e.BUTTON1)
+        {
+            Point point = e.getPoint();
 
+            int cellX = (int)((float)(point.x - offsetX) / zoomFactor);
+            int cellY = (int)((float)(point.y - offsetY) / zoomFactor);
+
+            Cell curCell = board.getCell(cellX, cellY);
+            board.setCellState(curCell, !curCell.isAlive());
+
+            repaint();
+        }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+
         mousePoint = e.getPoint();
     }
 

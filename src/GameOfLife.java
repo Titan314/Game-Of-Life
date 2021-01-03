@@ -42,11 +42,33 @@ public class GameOfLife
 
 
         Board board = new Board(256, 256);
+        /*
         board.setCell(1, 0, true);
         board.setCell(2, 1, true);
         board.setCell(0, 2, true);
         board.setCell(1, 2, true);
         board.setCell(2, 2, true);
+
+        board.setCell(30, 0, true);
+        board.setCell(29, 1, true);
+        board.setCell(31, 2, true);
+        board.setCell(30, 2, true);
+        board.setCell(29, 2, true);
+
+        board.setCell(1, 31, true);
+        board.setCell(2, 30, true);
+        board.setCell(0, 29, true);
+        board.setCell(1, 29, true);
+        board.setCell(2, 29, true);
+
+        /*
+        board.setCell(30, 31, true);
+        board.setCell(29, 30, true);
+        board.setCell(31, 29, true);
+        board.setCell(30, 29, true);
+        board.setCell(29, 29, true);
+
+         */
 
         simulation = new Simulation(board);
 
