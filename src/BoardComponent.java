@@ -7,11 +7,12 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
         MouseInputListener
 {
     private Board board;
-    private boolean drawGrid = true;
+    private boolean drawGrid = false;
 
     private Point mousePoint;
 
     //variables for drawing the view
+    //TODO: Redo zoom/pan code
     private float zoomFactor;
     private float offsetX;
     private float offsetY;
@@ -47,6 +48,7 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
             {
                 Cell curCell = board.getCell(x, y);
 
+                //Set the color to draw based on whether the cell is alive or dead
                 if(curCell.isAlive())
                     g.setColor(new Color(255,255, 128));
                 else
@@ -55,6 +57,7 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
                 int width = (int)zoomFactor;
                 int scale = width;
 
+                //TODO: Redo zoom/pan code
                 int drawX = scale * x + (int)offsetX;
                 int drawY = scale * y + (int)offsetY;
 
@@ -66,6 +69,9 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
         }
     }
 
+    public void setGridVisible(boolean val) { drawGrid = val; }
+    public boolean getGridVisible() { return drawGrid; }
+
     public void mouseWheelMoved(MouseWheelEvent e) {
         int scroll = e.getWheelRotation() * e.getScrollAmount();
 
@@ -75,8 +81,6 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
         float delZoom = newZoom - zoomFactor;
         if(newZoom < 1.0f)
             newZoom = 1.0f;
-
-
 
         zoomFactor = newZoom;
 
@@ -108,6 +112,9 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
             int cellX = (int)((float)(point.x - offsetX) / zoomFactor);
             int cellY = (int)((float)(point.y - offsetY) / zoomFactor);
 
+            if(cellX < 0 || cellX >= board.getWidth() || cellY < 0 || cellY >= board.getHeight())
+                return;
+
             if(cellX != lastModified.x || cellY != lastModified.y)
             {
                 Cell curCell = board.getCell(cellX, cellY);
@@ -135,6 +142,9 @@ public class BoardComponent extends JComponent implements MouseWheelListener,
 
             int cellX = (int)((float)(point.x - offsetX) / zoomFactor);
             int cellY = (int)((float)(point.y - offsetY) / zoomFactor);
+
+            if(cellX < 0 || cellX >= board.getWidth() || cellY < 0 || cellY >= board.getHeight())
+                return;
 
             Cell curCell = board.getCell(cellX, cellY);
             board.setCellState(curCell, !curCell.isAlive());

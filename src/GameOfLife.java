@@ -29,6 +29,7 @@ public class GameOfLife
         JMenu viewMenu = new JMenu("View");
         menuBar.add(viewMenu);
         JCheckBox gridCheck = new JCheckBox("Show Grid");
+        gridCheck.addActionListener(new ViewGridListener());
         viewMenu.add(gridCheck);
 
         JMenu optionsMenu = new JMenu("Options");
@@ -36,41 +37,33 @@ public class GameOfLife
 
         JMenu simulationMenu = new JMenu("Simulation");
         menuBar.add(simulationMenu);
+        JMenuItem resetItem = new JMenuItem("Reset");
+        resetItem.addActionListener(new ResetListener());
+        simulationMenu.add(resetItem);
         JMenuItem stepItem = new JMenuItem("Step");
         simulationMenu.add(stepItem);
         stepItem.addActionListener(new StepListener());
+        JMenuItem setRuleItem = new JMenuItem("Set Rules");
+        setRuleItem.addActionListener(new SetRuleListener());
+        simulationMenu.add(setRuleItem);
+        simulationMenu.add(new JSeparator());
+        JCheckBox wrapAround = new JCheckBox("Wrap Around");
+        wrapAround.addActionListener(new WrapAroundListener());
+        simulationMenu.add(wrapAround);
 
 
         Board board = new Board(256, 256);
-        /*
-        board.setCell(1, 0, true);
-        board.setCell(2, 1, true);
-        board.setCell(0, 2, true);
-        board.setCell(1, 2, true);
-        board.setCell(2, 2, true);
-
-        board.setCell(30, 0, true);
-        board.setCell(29, 1, true);
-        board.setCell(31, 2, true);
-        board.setCell(30, 2, true);
-        board.setCell(29, 2, true);
-
-        board.setCell(1, 31, true);
-        board.setCell(2, 30, true);
-        board.setCell(0, 29, true);
-        board.setCell(1, 29, true);
-        board.setCell(2, 29, true);
-
-        /*
-        board.setCell(30, 31, true);
-        board.setCell(29, 30, true);
-        board.setCell(31, 29, true);
-        board.setCell(30, 29, true);
-        board.setCell(29, 29, true);
-
-         */
-
         simulation = new Simulation(board);
+
+        try {
+            simulation.setRules("B3/S23");
+        }
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+
+            return;
+        }
 
         boardComponent = new BoardComponent(simulation.getBoard());
         frame.add(boardComponent);
@@ -86,6 +79,56 @@ public class GameOfLife
         public void actionPerformed(ActionEvent e) {
             simulation.step();
             boardComponent.repaint();
+        }
+    }
+
+    static class SetRuleListener implements ActionListener {
+        public void actionPerformed(ActionEvent e)
+        {
+            boolean inputValid = false;
+
+            while(!inputValid) {
+                JOptionPane pane = new JOptionPane();
+                String str = (String) JOptionPane.showInputDialog(null, "Enter a rule set:", "Set Simulation Rules",
+                        JOptionPane.PLAIN_MESSAGE, null, null, "");
+
+                if(str == null)
+                    break;
+
+                try {
+                    simulation.setRules(str);
+                    inputValid = true;
+                } catch (Exception exception) {
+                    JOptionPane.showMessageDialog(null,
+                            "Invalid format for rule string",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+
+    }
+
+    static class ResetListener implements ActionListener {
+        public void actionPerformed(ActionEvent e)
+        {
+            simulation.reset();
+            boardComponent.repaint();
+        }
+    }
+
+    static class ViewGridListener implements ActionListener {
+        public void actionPerformed(ActionEvent e)
+        {
+            boardComponent.setGridVisible(!boardComponent.getGridVisible());
+            boardComponent.repaint();
+        }
+    }
+
+    static class WrapAroundListener implements ActionListener {
+        public void actionPerformed(ActionEvent e)
+        {
+            simulation.setWrapAround(!simulation.getWrapAround());
         }
     }
 

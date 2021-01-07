@@ -16,13 +16,24 @@ public class Board {
         grid = new boolean[height][width];
     }
 
+    public void clear()
+    {
+        for(int y = 0; y < height; y++)
+            for(int x = 0; x < width; x++)
+                grid[y][x] = false;
+    }
+
     public int getWidth() { return width; }
     public int getHeight() { return height; }
+
+    public void setWrapAround(boolean val) { wrapAround = val; }
+    public boolean getWrapAround() { return wrapAround; }
 
     public ArrayList<Cell> getNeighbors(int x, int y)
     {
         ArrayList<Cell> list = new ArrayList<Cell>();
 
+        //Better way to do this?
         list.add(getNorth(x, y));
         list.add(getNorthEast(x, y));
         list.add(getEast(x, y));
@@ -43,6 +54,7 @@ public class Board {
 
     public Cell getCell(int x, int y)
     {
+        //If wrapAround is enabled, adjust x and y coordinates that are outside of the board
         if(wrapAround)
         {
             if(x < 0)
@@ -80,6 +92,7 @@ public class Board {
     public Cell getWest     (int x, int y) { return getCell(x - 1, y);}
     public Cell getNorthWest(int x, int y) { return getCell(x - 1, y -1);}
 
+    //Produces a random board. Not necessary anymore, but left just in case.
     public static Board RandomBoard(int width, int height)
     {
         Board board = new Board(width, height);
